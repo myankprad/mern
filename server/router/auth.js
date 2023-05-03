@@ -9,28 +9,32 @@ router.get("/", (req, res)=>{
     res.send("Hey")
 })
 
-router.post("/register", (req, res)=>{
+router.post("/register", async (req, res)=>{
    const {name, email, phone, work, password, cpassword}= req.body;
 
    if(!name || !email || !phone || !work || !password ||!cpassword){
     return res.status(422).json({error: "fil all fields"})
    }
 
-  User.findOne({email: email}) 
-  .then((userExist)=>{
-    if(userExist){
-    return res.status(422).json({error: "Email akready exist"})
-    }
+  try{
+     const userExist = await  User.findOne({email: email}) 
+      if(userExist){
+      return res.status(422).json({error: "Email already exist"})
+      }
+  
+      const user = new User({name, email, phone, work, password, cpassword})
 
-    const user = new User({name, email, phone, work, password, cpassword})
-
-    user.save().then(()=>{
-    res.status(422).json({error: "user registered succesfully"})
-
-    }).catch((err)=> res.status(500).json({error: "failed to register"}))
-
-  }).catch((err)=> console.log(err) )
-
+      const userRegister = await user.save();
+      if(userRegister){
+      res.status(422).json({error: "user registered succesfully"})
+        
+      } else{
+        res.status(500).json({error: "failed to register"})
+  
+      }
+  } catch(err){
+    console.log(err)
+  }
 })
 
 module.exports = router
