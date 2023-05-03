@@ -1,14 +1,22 @@
-const express = require("express");
+const dotenv = require("dotenv")
+const express = require("express")
 
-const app = express();
+require("./db/conn")
 
+const app = express()
+
+dotenv.config({path: "./config.env"})
+
+const PORT = process.env.PORT
+
+app.use(express.json())
+
+app.use(require("./router/auth"))
 // middleware
 
-const middleware =()=>{
-  
-}
+// const middleware =()=>{
 
-
+// }
 
 app.get("/", (req, res) => {
   res.send("hey boyyyyy");
@@ -30,6 +38,6 @@ app.get("/signup", (req, res) => {
   res.send("signup please");
 });
 
-app.listen(3000, (req, res) => {
+app.listen(PORT, (req, res) => {
   console.log("server is listening");
 });
